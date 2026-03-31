@@ -1,0 +1,19 @@
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+export const request = async (path, { method = "GET", body, token, isForm } = {}) => {
+  const headers = {};
+  if (!isForm) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_URL}${path}`, {
+    method,
+    headers,
+    body: isForm ? body : body ? JSON.stringify(body) : undefined
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || "Request failed");
+  return data;
+};
+
+export { API_URL };
